@@ -14,7 +14,7 @@ This repo just ships the macOS `.dmg`. The source code lives at
 
 Grab the latest build from the **[Releases](https://github.com/enderphan94/markdown-app/releases)** page:
 
-> [**MarkView-1.0.0.dmg**](https://github.com/enderphan94/markdown-app/releases/latest)
+> [**MarkView-2.0.0.dmg**](https://github.com/enderphan94/markdown-app/releases/latest)
 
 | | |
 |---|---|
@@ -27,7 +27,7 @@ Grab the latest build from the **[Releases](https://github.com/enderphan94/markd
 
 ## Install
 
-1. Double-click `MarkView-1.0.0.dmg` to mount it.
+1. Double-click `MarkView-2.0.0.dmg` to mount it.
 2. Drag **MarkView.app** into the **Applications** folder shortcut in the same window.
 3. Eject the mounted disk.
 4. **First launch** (one-time only): open Finder → Applications, then
@@ -43,6 +43,19 @@ warning. Right-click → Open bypasses it.
 
 ## Features
 
+- **Workspace sidebar (v2.0, new)** — Obsidian-style left panel with
+  nestable folders and notes. Drag-and-drop items between folders,
+  right-click for rename / delete / new folder / new note,
+  click-to-load, auto-save every 500 ms. On first launch you get a
+  pre-seeded *Getting Started → Welcome* note with the markdown +
+  mermaid showcase. Resize the sidebar by dragging the divider.
+- **English + Vietnamese UI (v2.0, new)** — pick language from the
+  EN/VN toggle next to the theme button, or from Settings. Every
+  toolbar button, modal, sidebar action, prompt, and toast is
+  translated. Setting persists across launches.
+- **Settings dialog (v2.0, new)** — gear icon in the toolbar opens
+  language picker, theme picker, and an About section with version
+  + source-code link.
 - **Live preview** as you type, with syntax-highlighted code blocks
   (Python, JavaScript, Bash, and 180+ other languages via highlight.js).
 - **Mermaid diagrams** rendered inline: flowcharts, sequence diagrams,
@@ -57,30 +70,30 @@ warning. Right-click → Open bypasses it.
   text or create blank trailing pages.
 - **Download .md** — save the current editor content to a file anywhere
   on disk. Cmd-S also triggers this.
-- **Draggable splitter** between the Markdown and Preview panes.
-  Position persists across launches. Double-click to reset; arrow keys
-  to nudge.
+- **Draggable splitters** between Workspace, Markdown, and Preview
+  panes. Positions persist across launches. Double-click to reset.
 - **Dark and light themes** with a one-tap toggle. Mermaid diagrams
   re-render with the matching palette.
-- **Welcome sample on first launch** showing every markdown feature
-  plus four mermaid diagram types, so you can see what's possible
-  immediately.
 
 ---
 
 ## Data
 
-- The SQLite database (currently unused in offline mode but kept for
-  future features) lives at:
+- All your folders, notes, and note content live in a SQLite database at:
 
       ~/Library/Application Support/MarkView/markdown.db
 
-- The split-pane position and dark/light preference are stored in
-  the embedded browser's localStorage, inside the same Application
-  Support directory.
+  Reinstalling the app doesn't touch this file. To back up your work,
+  copy the `MarkView` folder to another drive.
 
-- Nothing is uploaded anywhere. There is no `/api/save` endpoint —
-  the only network calls in the app are to `127.0.0.1`.
+- Pane sizes, dark/light preference, active note, expanded-folder
+  state, and language are stored in the embedded browser's
+  localStorage, inside the same Application Support directory.
+
+- Nothing is uploaded anywhere. The only network calls the app makes
+  are to `127.0.0.1` (its own embedded server). There is no
+  `/api/save` endpoint — the share/upload flow from the web version
+  is absent in MarkView by design.
 
 ---
 
