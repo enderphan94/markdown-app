@@ -37,24 +37,36 @@ reading.
 | Architecture | Universal (Intel + Apple Silicon, x86_64) |
 | Network | Fully offline by default. Only the optional Save & share / Import / Copy Share URL / auto-update features make a network call. |
 
-### Easiest — Homebrew (Recommended)
+### Easiest — one-line installer (no Homebrew needed)
+
+```bash
+curl -fsSL https://markdown.kuberscan.com/install.sh | bash
+```
+
+Works on any Mac with `curl` (built in). The script downloads the
+latest `.dmg`, copies MarkView to `/Applications`, strips the macOS
+quarantine attribute, and ejects. **First launch is clean — no
+"developer cannot be verified" warning, no right-click → Open
+dance.** Re-run the same command later to update, or let MarkView's
+own in-app updater handle it.
+
+### Alternative — Homebrew
+
+If you already have Homebrew:
 
 ```bash
 brew install --cask enderphan94/tap/markview
 ```
 
-Homebrew downloads the latest `.dmg`, copies MarkView to `/Applications`,
-strips the macOS quarantine attribute, and ejects. **The app launches
-straight away — no "developer cannot be verified" warning, no
-right-click → Open dance.** Update later with `brew upgrade --cask markview`
-(or just let MarkView's in-app updater handle it).
+Same end result (clean install, no Gatekeeper warning). Update with
+`brew upgrade --cask markview`.
 
 ### Direct DMG
 
 Grab the latest `.dmg` from the
 **[Releases](https://github.com/enderphan94/markdown-app/releases)** page:
 
-> [**MarkView-2.2.5.dmg**](https://github.com/enderphan94/markdown-app/releases/latest)
+> [**MarkView-2.2.6.dmg**](https://github.com/enderphan94/markdown-app/releases/latest)
 
 Then:
 
