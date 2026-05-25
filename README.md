@@ -1,7 +1,8 @@
 # MarkView
 
 A markdown editor with live preview, mermaid diagrams, and an offline
-macOS app for taking notes.
+macOS app for taking notes — with a real filesystem vault that syncs
+through iCloud Drive.
 
 ---
 
@@ -13,10 +14,12 @@ There are two flavours, sharing the same engine and visual style:
   Open in any browser. "Save & share" gives you a temporary 48-hour URL
   anyone can open.
 - **MarkView (macOS)**: a native desktop app for offline note-taking.
-  Adds a workspace sidebar with nestable folders, notes, English +
-  Vietnamese UI, and persistent storage on your Mac. All your data
-  stays on your machine; sharing is opt-in via the same 48-hour URL
-  service as the web version.
+  Adds an Obsidian-style workspace sidebar with nestable folders and
+  notes, stored as real `.md` files on disk so iCloud Drive (or any
+  other sync service) syncs them automatically across your Macs. Notes
+  open cleanly in Obsidian, VS Code, vim, anything that reads markdown.
+  English + Vietnamese UI. Auto-updates itself directly from GitHub
+  releases — no manual reinstall, no Gatekeeper reprompt.
 
 The web app's source code lives at
 [enderphan94/markdown](https://github.com/enderphan94/markdown).
@@ -31,14 +34,14 @@ Grab the latest macOS build from the
 **[Releases](https://github.com/enderphan94/markdown-app/releases)**
 page:
 
-> [**MarkView-2.1.1.dmg**](https://github.com/enderphan94/markdown-app/releases/latest)
+> [**MarkView-2.2.3.dmg**](https://github.com/enderphan94/markdown-app/releases/latest)
 
 |  |  |
 |---|---|
 | Size | ~13 MB |
 | Requires | macOS 11 (Big Sur) or newer |
 | Architecture | Universal (Intel + Apple Silicon, x86_64) |
-| Network | Fully offline by default. Only the optional Save & share / Import / Copy Share URL features make a network call. |
+| Network | Fully offline by default. Only the optional Save & share / Import / Copy Share URL / auto-update features make a network call. |
 
 > **Note about the release page.**
 > Every GitHub release also shows two extra "Source code (zip)" /
@@ -51,7 +54,7 @@ page:
 
 **Install**
 
-1. Double-click `MarkView-2.1.1.dmg` to mount it.
+1. Double-click `MarkView-2.2.3.dmg` to mount it.
 2. Drag **MarkView.app** into the **Applications** folder shortcut in
    the same window.
 3. Eject the disk.
@@ -59,12 +62,22 @@ page:
    **Open** in the dialog. This is needed because the app is unsigned.
    macOS asks once, and every launch afterwards works normally from
    the Dock or Spotlight.
+5. **First launch also**: a vault-location picker appears. Accept the
+   iCloud Drive default (recommended for cross-Mac sync) or untoggle
+   it to type / Browse for another location.
+
+**Already running an older version?** From v2.1.0 onwards the app
+checks GitHub on launch and prompts to auto-update — one click and
+you're on the latest, no manual download, no Gatekeeper reprompt.
+Pre-2.1.0 builds need one manual `.dmg` install to opt into the
+auto-update flow; from then on it's always one-hop to the newest.
 
 **Uninstall**
 
 ```bash
 # Drag MarkView from Applications to Trash, then (optional) remove
-# user data:
+# the per-Mac config + database. Your vault folder (where your notes
+# live as .md files) is untouched — delete it separately if you want.
 rm -rf ~/Library/Application\ Support/MarkView
 ```
 
@@ -89,45 +102,109 @@ rm -rf ~/Library/Application\ Support/MarkView
     and colourful mermaid diagrams.
   - Tall mermaid charts auto-scale to fit one page; no overlaps, no
     blank trailing pages.
-- Download .md to disk (Cmd / Ctrl + S).
 - Draggable splitters between every pane. Positions persist across
   launches.
 - Dark and light themes with a one-tap toggle. Mermaid re-renders
   with the matching palette.
 - Save & share: temporary 48-hour URL anyone can open.
+- Cmd / Ctrl + S to save (flushes the auto-save on desktop, triggers
+  Save & share on the web).
 
 ### MarkView desktop only
 
-- **Workspace sidebar** with nestable folders + notes. Obsidian-style:
-  - Drag-and-drop between folders.
-  - Right-click for new note / new folder / rename / duplicate / copy
-    & share URL / delete.
-  - Expand-all / collapse-all toggle.
-  - Seven sort modes: manual (drag order), file name A-Z / Z-A,
-    modified new-old / old-new, created new-old / old-new.
-  - Auto-save every 500 ms while you type.
-- **Import from URL**: paste any
-  `markdown.kuberscan.com/<id>` link, click View, and the content
-  lands as a new note in your workspace.
-- **Copy & Share URL** from the right-click menu: posts the note,
-  copies the 48-hour URL straight to your clipboard.
+#### Obsidian-style vault — your notes are real files
+
+- **Folders are directories, notes are `.md` files** on disk. Open
+  the same vault in Obsidian, VS Code, vim, Finder, anything.
+- **First-launch vault picker** with a "Use default (iCloud Drive)"
+  toggle. Off → input + Browse for any folder. Validates the path
+  exists ("Location not found" if it doesn't).
+- **iCloud Drive default location** so notes sync automatically
+  across Macs the moment you save.
+- **Change vault location** anytime from Settings → Vault →
+  "Change location…".
+- **Migration**: existing v2.1 users' SQLite-backed notes are
+  imported to real files in the new vault on first launch of v2.2+;
+  the old database is renamed to `*.imported` as a backup.
+
+#### Workspace sidebar
+
+- **Nestable folders + notes** with drag-and-drop between folders.
+- **Right-click menu**: new note, new folder, rename, duplicate
+  (single note or recursive folder copy with `_copied` suffix and
+  collision auto-numbering), copy & share URL, delete.
+- **Double-click any item to rename** — same behaviour as Finder /
+  Obsidian.
+- **Expand-all / collapse-all toggle** in the sidebar header.
+- **Six sort modes**: file name A-Z / Z-A, modified new-old /
+  old-new, created new-old / old-new.
+- **Auto-save every 500 ms** while you type, plus a forced flush on
+  Cmd / Ctrl + S.
+- **Cleaner Obsidian-style tree**: chevrons-only indent guides, no
+  emoji icons cluttering rows.
+
+#### Import & share
+
+- **Import from URL**: paste any of these and click View — the file
+  becomes a new note in your workspace:
+  - `markdown.kuberscan.com/<id>` (or the bare ID) — share-URL imports
+  - `github.com/<owner>/<repo>/blob/<ref>/<path>` — GitHub blob URLs
+  - `github.com/<owner>/<repo>/edit/<ref>/<path>` — GitHub edit URLs
+  - `github.com/<owner>/<repo>/raw/<ref>/<path>` — GitHub raw URLs
+  - `raw.githubusercontent.com/<owner>/<repo>/<ref>/<path>`
+  - GitHub imports keep the source file's basename
+    (`README.md` → "README"); kuberscan imports use "new_note".
+    Collisions auto-suffix `_2`, `_3`, ….
+  - The "URL / GitHub" chip in the input panel makes it visually
+    clear both source types are accepted.
+- **Save & share** from the toolbar: posts the current note to
+  `markdown.kuberscan.com` and shows a 48-hour shareable URL.
+- **Copy & Share URL** in the right-click menu: same flow but
+  puts the URL straight on your clipboard with a single click.
+
+#### Auto-update
+
+- **On-launch update check** against GitHub releases. If a newer
+  version exists, a modal pops with **Update Now** / **Skip**.
+  - **Update Now**: downloads the new `.dmg`, swaps the app
+    in-place, strips the macOS quarantine attribute so Gatekeeper
+    doesn't reprompt, relaunches automatically. One click.
+  - **Skip**: dismisses for the session; the modal reappears on
+    the next launch.
+  - During install the buttons hide so you can't double-click.
+- **Settings → Check for updates** runs the same check on demand
+  and toasts "You're using the latest version" when up to date.
+- **Direct hop**: from v2.1.0 onwards, going from any older
+  version straight to the newest is one click — no need to
+  install intermediate versions.
+
+#### Polish
+
 - **English + Vietnamese UI**: toggle EN / VN from the toolbar or
   Settings. Every button, prompt, modal, and toast is translated.
-- **Settings dialog**: language picker, theme picker, version + author
-  info.
+- **Settings dialog**: language picker, theme picker, vault
+  location + Change… button, version, "Check for updates" button,
+  author + source-code links.
 - **Welcome sample** on first launch with the markdown + mermaid
   showcase so you see what's possible immediately.
+- **Keyboard guard**: Cmd-R (reload), Cmd-W (close window) blocked
+  so you don't accidentally lose unsaved state; Cmd-Q quits as
+  normal.
+- **Web Inspector** off in shipped builds. Re-enable with
+  `MARKVIEW_DEBUG=1` if you're diagnosing something.
 
 ### Data
 
-All workspace data lives at:
+Two locations the app uses:
 
 ```
-~/Library/Application Support/MarkView/markdown.db
+~/Library/Application Support/MarkView/config.json   # per-Mac config
+~/<your vault folder>/                               # your notes (real .md files)
 ```
 
-Reinstalling the app doesn't touch this file. Back up that folder to
-back up your notes.
+The vault location is whatever you picked in the first-launch
+picker (default: iCloud Drive). Reinstalling MarkView doesn't touch
+either file. Backup = copy the vault folder.
 
 ---
 
@@ -145,9 +222,10 @@ MarkView:
   splitter UX. A great minimalist take on markdown editing that
   shaped how MarkView's editor feels.
 
-The Obsidian-style workspace sidebar is also clearly inspired by
-[Obsidian](https://obsidian.md), though MarkView's tree is a much
-simpler implementation tailored to single-file markdown notes.
+The Obsidian-style workspace sidebar + vault model is also clearly
+inspired by [Obsidian](https://obsidian.md), though MarkView's tree
+is a much simpler implementation tailored to single-file markdown
+notes.
 
 ---
 
@@ -159,3 +237,4 @@ Issues and feature requests welcome at
 [enderphan94/markdown-app/issues](https://github.com/enderphan94/markdown-app/issues).
 
 <enderlocphan@gmail.com>
+</content>
