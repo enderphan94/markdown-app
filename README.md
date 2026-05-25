@@ -1,125 +1,152 @@
 # MarkView
 
-A fully offline macOS markdown editor with mermaid diagram support,
-live preview, PDF export, and syntax-highlighted code blocks.
-Everything runs locally on your Mac. Nothing leaves your machine.
-
-The web version is at [markdown.kuberscan.com](https://markdown.kuberscan.com).
-This repo just ships the macOS `.dmg`. The source code lives at
-[enderphan94/markdown](https://github.com/enderphan94/markdown).
+A markdown editor with live preview, mermaid diagrams, and an offline
+macOS app for taking notes.
 
 ---
 
-## Download
+## Introduction
 
-Grab the latest build from the **[Releases](https://github.com/enderphan94/markdown-app/releases)** page:
+There are two flavours, sharing the same engine and visual style:
+
+- **Web**: [markdown.kuberscan.com](https://markdown.kuberscan.com).
+  Open in any browser. "Save & share" gives you a temporary 48-hour URL
+  anyone can open.
+- **MarkView (macOS)**: a native desktop app for offline note-taking.
+  Adds a workspace sidebar with nestable folders, notes, English +
+  Vietnamese UI, and persistent storage on your Mac. All your data
+  stays on your machine; sharing is opt-in via the same 48-hour URL
+  service as the web version.
+
+The web app's source code lives at
+[enderphan94/markdown](https://github.com/enderphan94/markdown).
+This repository hosts the macOS `.dmg` releases and the README you're
+reading.
+
+---
+
+## Download & Installation
+
+Grab the latest macOS build from the
+**[Releases](https://github.com/enderphan94/markdown-app/releases)**
+page:
 
 > [**MarkView-2.0.0.dmg**](https://github.com/enderphan94/markdown-app/releases/latest)
 
-| | |
+|  |  |
 |---|---|
 | Size | ~13 MB |
 | Requires | macOS 11 (Big Sur) or newer |
 | Architecture | Universal (Intel + Apple Silicon, x86_64) |
-| Network | Works fully offline. No telemetry, no analytics, no accounts. |
+| Network | Fully offline by default. Only the optional Save & share / Import / Copy Share URL features make a network call. |
 
----
-
-## Install
+**Install**
 
 1. Double-click `MarkView-2.0.0.dmg` to mount it.
-2. Drag **MarkView.app** into the **Applications** folder shortcut in the same window.
-3. Eject the mounted disk.
-4. **First launch** (one-time only): open Finder → Applications, then
-   **right-click MarkView → Open** → click **Open** in the dialog.
-   This is needed because the app is unsigned. macOS only asks once;
-   every launch afterwards works normally from the Dock or Spotlight.
+2. Drag **MarkView.app** into the **Applications** folder shortcut in
+   the same window.
+3. Eject the disk.
+4. **First launch only**: right-click MarkView → **Open** → click
+   **Open** in the dialog. This is needed because the app is unsigned.
+   macOS asks once, and every launch afterwards works normally from
+   the Dock or Spotlight.
 
-If you double-click MarkView and macOS says "cannot be opened because
-Apple cannot check it for malicious software", that's the same Gatekeeper
-warning. Right-click → Open bypasses it.
+**Uninstall**
+
+```bash
+# Drag MarkView from Applications to Trash, then (optional) remove
+# user data:
+rm -rf ~/Library/Application\ Support/MarkView
+```
 
 ---
 
 ## Features
 
-- **Workspace sidebar (v2.0, new)** — Obsidian-style left panel with
-  nestable folders and notes. Drag-and-drop items between folders,
-  right-click for rename / delete / new folder / new note,
-  click-to-load, auto-save every 500 ms. On first launch you get a
-  pre-seeded *Getting Started → Welcome* note with the markdown +
-  mermaid showcase. Resize the sidebar by dragging the divider.
-- **English + Vietnamese UI (v2.0, new)** — pick language from the
-  EN/VN toggle next to the theme button, or from Settings. Every
-  toolbar button, modal, sidebar action, prompt, and toast is
-  translated. Setting persists across launches.
-- **Settings dialog (v2.0, new)** — gear icon in the toolbar opens
-  language picker, theme picker, and an About section with version
-  + source-code link.
-- **Live preview** as you type, with syntax-highlighted code blocks
-  (Python, JavaScript, Bash, and 180+ other languages via highlight.js).
-- **Mermaid diagrams** rendered inline: flowcharts, sequence diagrams,
-  pie charts, state diagrams, class diagrams, Gantt charts, mindmaps,
-  ER diagrams, user journeys, git graphs. See [mermaid.js.org](https://mermaid.js.org)
-  for the full catalog of what works inside fenced ` ```mermaid ` blocks.
-- **Export PDF** in two modes via a chooser dialog:
-  - *Default* — pure black & white, mermaid diagrams forced to grayscale.
-  - *Styled* — preview colors preserved, including syntax highlighting
-    and colored mermaid SVGs.
-  Tall mermaid charts auto-scale to fit one page so they never overlap
-  text or create blank trailing pages.
-- **Download .md** — save the current editor content to a file anywhere
-  on disk. Cmd-S also triggers this.
-- **Draggable splitters** between Workspace, Markdown, and Preview
-  panes. Positions persist across launches. Double-click to reset.
-- **Dark and light themes** with a one-tap toggle. Mermaid diagrams
-  re-render with the matching palette.
+### Editor (web + macOS)
+
+- Live preview as you type.
+- GitHub-flavored markdown: headings, bold / italic / strikethrough,
+  lists, nested lists, task lists, blockquotes, tables, fenced code,
+  inline code, links, images, horizontal rules.
+- Syntax highlighting for 180+ languages via highlight.js.
+- Mermaid diagrams inline (flowchart, sequence, pie, state, class,
+  gantt, mindmap, ER, journey, git graph) via fenced ` ```mermaid `
+  blocks.
+- Export PDF in two modes:
+  - *Default*: pure black & white, mermaid forced to grayscale,
+    smallest file.
+  - *Styled*: preview colours preserved, including syntax highlighting
+    and colourful mermaid diagrams.
+  - Tall mermaid charts auto-scale to fit one page; no overlaps, no
+    blank trailing pages.
+- Download .md to disk (Cmd / Ctrl + S).
+- Draggable splitters between every pane. Positions persist across
+  launches.
+- Dark and light themes with a one-tap toggle. Mermaid re-renders
+  with the matching palette.
+- Save & share: temporary 48-hour URL anyone can open.
+
+### MarkView desktop only
+
+- **Workspace sidebar** with nestable folders + notes. Obsidian-style:
+  - Drag-and-drop between folders.
+  - Right-click for new note / new folder / rename / duplicate / copy
+    & share URL / delete.
+  - Expand-all / collapse-all toggle.
+  - Seven sort modes: manual (drag order), file name A-Z / Z-A,
+    modified new-old / old-new, created new-old / old-new.
+  - Auto-save every 500 ms while you type.
+- **Import from URL**: paste any
+  `markdown.kuberscan.com/<id>` link, click View, and the content
+  lands as a new note in your workspace.
+- **Copy & Share URL** from the right-click menu: posts the note,
+  copies the 48-hour URL straight to your clipboard.
+- **English + Vietnamese UI**: toggle EN / VN from the toolbar or
+  Settings. Every button, prompt, modal, and toast is translated.
+- **Settings dialog**: language picker, theme picker, version + author
+  info.
+- **Welcome sample** on first launch with the markdown + mermaid
+  showcase so you see what's possible immediately.
+
+### Data
+
+All workspace data lives at:
+
+```
+~/Library/Application Support/MarkView/markdown.db
+```
+
+Reinstalling the app doesn't touch this file. Back up that folder to
+back up your notes.
 
 ---
 
-## Data
+## Inspiration
 
-- All your folders, notes, and note content live in a SQLite database at:
+Big thanks to these projects for the ideas and code that shaped
+MarkView:
 
-      ~/Library/Application Support/MarkView/markdown.db
+- [**mermaid-js/mermaid**](https://github.com/mermaid-js/mermaid):
+  the diagram engine. Without it, the entire "diagrams from fenced
+  code blocks" experience would not exist. MarkView ships mermaid v11
+  inline so it works fully offline.
+- [**tanabe/markdown-live-preview**](https://github.com/tanabe/markdown-live-preview):
+  inspiration for the two-pane live-preview layout and the draggable
+  splitter UX. A great minimalist take on markdown editing that
+  shaped how MarkView's editor feels.
 
-  Reinstalling the app doesn't touch this file. To back up your work,
-  copy the `MarkView` folder to another drive.
-
-- Pane sizes, dark/light preference, active note, expanded-folder
-  state, and language are stored in the embedded browser's
-  localStorage, inside the same Application Support directory.
-
-- Nothing is uploaded anywhere. The only network calls the app makes
-  are to `127.0.0.1` (its own embedded server). There is no
-  `/api/save` endpoint — the share/upload flow from the web version
-  is absent in MarkView by design.
-
----
-
-## Uninstall
-
-1. Drag **MarkView.app** from Applications to the Trash.
-2. Optional, removes settings + DB:
-
-   ```bash
-   rm -rf ~/Library/Application\ Support/MarkView
-   ```
-
----
-
-## Source code
-
-The Python + Flask + Jinja + JS source is at
-[enderphan94/markdown](https://github.com/enderphan94/markdown). The
-desktop build pipeline (PyInstaller spec, pywebview entry point, .dmg
-script) lives in the `desktop/` directory of that repo.
+The Obsidian-style workspace sidebar is also clearly inspired by
+[Obsidian](https://obsidian.md), though MarkView's tree is a much
+simpler implementation tailored to single-file markdown notes.
 
 ---
 
 ## Author
 
-Built by [enderphan94](https://github.com/enderphan94). Issues and
-feature requests welcome.
+Built by [**enderphan94**](https://github.com/enderphan94).
+
+Issues and feature requests welcome at
+[enderphan94/markdown-app/issues](https://github.com/enderphan94/markdown-app/issues).
 
 <enderlocphan@gmail.com>
