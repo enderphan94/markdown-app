@@ -20,8 +20,15 @@
 #     wherever you picked at first launch; that's untouched).
 #   - Require sudo (so long as /Applications is writable by your user,
 #     which is the macOS default).
-#   - Phone home — only HTTPS requests are GitHub for the release
-#     metadata + DMG download.
+#
+# Network requests this script makes:
+#   - GitHub API + GitHub releases CDN to find and download the .dmg.
+#   - kuberscan.com/api/stats/event ONCE after install succeeds, posting
+#     only {os, arch, release tag}. No personal info, no IDs, no
+#     filesystem paths. Fire-and-forget; if it fails it never breaks
+#     the install. Used to count rough install volume on the dashboard
+#     at https://kuberscan.com/admin/stats. Opt out by commenting out
+#     the final block at the bottom of this file.
 
 set -euo pipefail
 
@@ -131,3 +138,15 @@ echo "    open /Applications/MarkView.app"
 echo
 echo "Updates: MarkView checks GitHub on launch and prompts to update."
 echo "         You can also re-run this installer at any time."
+
+# ── Anonymous install ping (best-effort, never blocks or fails) ─────
+# The token below is substituted in at serve time by the markdown
+# Flask app — it's never present in the git repo. If you fetched this
+# script from GitHub raw directly, __STATS_TOKEN__ stays unsubstituted
+# and the curl below returns 401, which we swallow. To opt out of the
+# ping entirely, just delete or comment out the next 5 lines.
+curl -fsSL -X POST https://kuberscan.com/api/stats/event \
+    -H "Content-Type: application/json" \
+    -H "X-Stats-Token: __STATS_TOKEN__" \
+    -d "{\"event_type\":\"install_success\",\"source\":\"install_sh\",\"metadata\":{\"os\":\"macos\",\"arch\":\"$(uname -m)\",\"tag\":\"${TAG:-}\"}}" \
+    >/dev/null 2>&1 || true
