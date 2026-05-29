@@ -83,13 +83,19 @@ if pgrep -fl "/Applications/MarkView.app/Contents/MacOS/MarkView" >/dev/null 2>&
 fi
 
 # ── Download to a private temp dir ─────────────────────────────────
-TMPDIR="$(mktemp -d -t markview-install)"
-DMG_PATH="$TMPDIR/MarkView.dmg"
+# Use an explicit XXXXXX template (not `-t PREFIX`): BSD mktemp treats
+# `-t` as a prefix and is happy, but GNU coreutils mktemp (which many
+# macOS users have first on PATH via Homebrew's gnubin) rejects a
+# template with no X's: "too few X's in template". A full path template
+# works on both. We avoid the name TMPDIR so we don't clobber the env
+# var that mktemp/hdiutil/etc. read.
+WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/markview-install.XXXXXXXX")"
+DMG_PATH="$WORKDIR/MarkView.dmg"
 MOUNT_POINT=""
 cleanup() {
     [[ -n "$MOUNT_POINT" && -d "$MOUNT_POINT" ]] \
         && hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
-    rm -rf "$TMPDIR" 2>/dev/null || true
+    rm -rf "$WORKDIR" 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
 
